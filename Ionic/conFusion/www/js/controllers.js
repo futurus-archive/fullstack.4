@@ -39,9 +39,40 @@ angular.module('conFusion.controllers', [])
         $scope.closeLogin();
       }, 1000);
     };
+
+
+    $scope.reservation = {};
+
+    // Create the reserve modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/reserve.html', {
+      scope: $scope
+    }).then(function (modal) {
+      $scope.reserveform = modal;
+    });
+
+    // Triggered in the reserve modal to close it
+    $scope.closeReserve = function () {
+      $scope.reserveform.hide();
+    };
+
+    // Open the reserve modal
+    $scope.reserve = function () {
+      $scope.reserveform.show();
+    };
+
+    // Perform the reserve action when the user submits the reserve form
+    $scope.doReserve = function () {
+      console.log('Doing reservation', $scope.reservation);
+
+      // Simulate a reservation delay. Remove this and replace with your reservation
+      // code if using a server system
+      $timeout(function () {
+        $scope.closeReserve();
+      }, 1000);
+    };
   })
 
-  .controller('MenuController', ['$scope', 'menuFactory', 'baseURL', function($scope, menuFactory, baseURL) {
+  .controller('MenuController', ['$scope', 'menuFactory', 'baseURL', function ($scope, menuFactory, baseURL) {
 
     $scope.baseURL = baseURL;
     $scope.tab = 1;
@@ -118,7 +149,7 @@ angular.module('conFusion.controllers', [])
     };
   }])
 
-  .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function($scope, $stateParams, menuFactory, baseURL) {
+  .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function ($scope, $stateParams, menuFactory, baseURL) {
     $scope.baseURL = baseURL;
     $scope.dish = {};
     $scope.showDish = false;
@@ -158,23 +189,23 @@ angular.module('conFusion.controllers', [])
 
   // implement the IndexController and About Controller here
 
-  .controller('IndexController', ['$scope', 'menuFactory', 'corporateFactory', 'baseURL', function($scope, menuFactory, corporateFactory, baseURL) {
+  .controller('IndexController', ['$scope', 'menuFactory', 'corporateFactory', 'baseURL', function ($scope, menuFactory, corporateFactory, baseURL) {
 
     $scope.baseURL = baseURL;
-    $scope.leader = corporateFactory.get({id:3});
+    $scope.leader = corporateFactory.get({id: 3});
     $scope.showDish = false;
-    $scope.message="Loading ...";
-    $scope.dish = menuFactory.getDishes().get({id:0})
+    $scope.message = "Loading ...";
+    $scope.dish = menuFactory.getDishes().get({id: 0})
       .$promise.then(
-        function(response){
+        function (response) {
           $scope.dish = response;
           $scope.showDish = true;
         },
-        function(response) {
-          $scope.message = "Error: "+response.status + " " + response.statusText;
+        function (response) {
+          $scope.message = "Error: " + response.status + " " + response.statusText;
         }
       );
-    $scope.promotion = menuFactory.getPromotion().get({id:0});
+    $scope.promotion = menuFactory.getPromotion().get({id: 0});
   }])
 
   .controller('AboutController', ['$scope', 'corporateFactory', 'baseURL', function ($scope, corporateFactory, baseURL) {
