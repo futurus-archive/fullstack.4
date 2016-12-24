@@ -1,0 +1,36 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Add Comment for {{dish.name}}</h1>
+    <div class="buttons">
+      <button class="button button-icon icon ion-ios-close-outline" ng-click="closeComment()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form name="commentForm" ng-submit="doComment(); closeComment()" novalidate>
+      <div class="list">
+        <label class="item item-input item-select">
+          <span class="input-label">Rating</span>
+          <select name="rating" ng-model="comment.rating" required>
+            <option ng-repeat="n in [5,4,3,2,1]" value="{{n}}">{{n}}</option>
+          </select>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Name</span>
+          <input type="text" name="author" ng-model="comment.author" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Comment</span>
+          <textarea name="comment" ng-model="comment.comment" rows="5" required></textarea>
+        </label>
+        <div class="padding">
+          <p ng-show="commentForm.rating.$error.required && !commentForm.rating.$pristine">* Rating is required</p>
+          <p ng-show="commentForm.author.$error.required && !commentForm.author.$pristine">* Name is required</p>
+          <p ng-show="commentForm.comment.$error.required && !commentForm.comment.$pristine">* Comment is required</p>
+        </div>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit" ng-disabled="commentForm.$invalid">Comment</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>
