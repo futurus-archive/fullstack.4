@@ -123,6 +123,58 @@ angular.module('conFusion.controllers', [])
     }
   }])
 
+  .controller('FavoritesController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout', function ($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate, $ionicPopup, $ionicLoading, $timeout) {
+
+    $scope.baseURL = baseURL;
+    $scope.shouldShowDelete = false;
+
+    $ionicLoading.show({
+      template: '<ion-spinner></ion-spinner> Loading...'
+    });
+
+    $scope.favorites = favoriteFactory.getFavorites();
+
+    $scope.dishes = menuFactory.getDishes().query(
+      function (response) {
+        $scope.dishes = response;
+        $timeout(function () {
+          $ionicLoading.hide();
+        }, 1000);
+      },
+      function (response) {
+        $scope.message = "Error: " + response.status + " " + response.statusText;
+        $timeout(function () {
+          $ionicLoading.hide();
+        }, 1000);
+      });
+    console.log($scope.dishes, $scope.favorites);
+
+    $scope.toggleDelete = function () {
+      $scope.shouldShowDelete = !$scope.shouldShowDelete;
+      console.log($scope.shouldShowDelete);
+    }
+
+    $scope.deleteFavorite = function (index) {
+
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Confirm Delete',
+        template: 'Are you sure you want to delete this item?'
+      });
+
+      confirmPopup.then(function (res) {
+        if (res) {
+          console.log('Ok to delete');
+          favoriteFactory.deleteFromFavorites(index);
+        } else {
+          console.log('Canceled delete');
+        }
+      });
+
+      $scope.shouldShowDelete = false;
+
+    }
+  }])
+
   .controller('ContactController', ['$scope', function ($scope) {
 
     $scope.feedback = {mychannel: "", firstName: "", lastName: "", agree: false, email: ""};
@@ -218,4 +270,18 @@ angular.module('conFusion.controllers', [])
     $scope.baseURL = baseURL
     $scope.leaders = corporateFactory.query();
   }])
+
+  .filter('favoriteFilter', function () {
+    return function (dishes, favorites) {
+      var out = [];
+      for (var i = 0; i < favorites.length; i++) {
+        for (var j = 0; j < dishes.length; j++) {
+          if (dishes[j].id === favorites[i].id)
+            out.push(dishes[j]);
+        }
+      }
+      return out;
+
+    }
+  });
 ;
