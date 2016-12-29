@@ -10,7 +10,7 @@ angular.module('conFusion.controllers', [])
     //});
 
     // Form data for the login modal
-    $scope.loginData = $localStorage.getObject('userinfo','{}');
+    $scope.loginData = $localStorage.getObject('userinfo', '{}');
 
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -32,7 +32,7 @@ angular.module('conFusion.controllers', [])
     // Perform the login action when the user submits the login form
     $scope.doLogin = function () {
       console.log('Doing login', $scope.loginData);
-      $localStorage.storeObject('userinfo',$scope.loginData);
+      $localStorage.storeObject('userinfo', $scope.loginData);
 
       // Simulate a login delay. Remove this and replace with your login
       // code if using a login system
@@ -73,7 +73,7 @@ angular.module('conFusion.controllers', [])
     };
   })
 
-  .controller('MenuController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', function ($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate) {
+  .controller('MenuController', ['$scope', 'dishes', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', function ($scope, dishes, menuFactory, favoriteFactory, baseURL, $ionicListDelegate) {
 
     $scope.baseURL = baseURL;
     $scope.tab = 1;
@@ -82,15 +82,7 @@ angular.module('conFusion.controllers', [])
     $scope.showMenu = false;
     $scope.message = "Loading ...";
 
-    menuFactory.query(
-      function (response) {
-        $scope.dishes = response;
-        $scope.showMenu = true;
-      },
-      function (response) {
-        $scope.message = "Error: " + response.status + " " + response.statusText;
-      });
-
+    $scope.dishes = dishes;
 
     $scope.select = function (setTab) {
       $scope.tab = setTab;
@@ -132,10 +124,6 @@ angular.module('conFusion.controllers', [])
     $scope.favorites = favorites;
 
     $scope.dishes = dishes;
-
-    $ionicLoading.show({
-      template: '<ion-spinner></ion-spinner> Loading...'
-    });
 
     console.log($scope.dishes, $scope.favorites);
 
@@ -219,9 +207,9 @@ angular.module('conFusion.controllers', [])
 
     $scope.addFavorite = function (index) {
       favoriteFactory.addToFavorites(index);
-    }
+    };
 
-    $scope.comment = {}
+    $scope.comment = {};
 
     // comment form
     $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
@@ -269,38 +257,18 @@ angular.module('conFusion.controllers', [])
 
   // implement the IndexController and About Controller here
 
-  .controller('IndexController', ['$scope', 'menuFactory', 'promotionFactory', 'corporateFactory', 'baseURL', function ($scope, menuFactory, promotionFactory, corporateFactory, baseURL) {
+  .controller('IndexController', ['$scope', 'leader', 'dish', 'promotion', 'menuFactory', 'promotionFactory', 'corporateFactory', 'baseURL', function ($scope, leader, dish, promotion, menuFactory, promotionFactory, corporateFactory, baseURL) {
 
     $scope.baseURL = baseURL;
-    $scope.leader = corporateFactory.get({
-      id: 3
-    });
-
-    $scope.showDish = false;
-    $scope.message = "Loading ...";
-
-    $scope.dish = menuFactory.get({
-      id: 0
-    })
-      .$promise.then(
-        function (response) {
-          $scope.dish = response;
-          $scope.showDish = true;
-        },
-        function (response) {
-          $scope.message = "Error: " + response.status + " " + response.statusText;
-        }
-      );
-
-    $scope.promotion = promotionFactory.get({
-      id: 0
-    });
+    $scope.leader = leader
+    $scope.dish = dish;
+    $scope.promotion = promotion;
 
   }])
 
-  .controller('AboutController', ['$scope', 'corporateFactory', 'baseURL', function ($scope, corporateFactory, baseURL) {
+  .controller('AboutController', ['$scope', 'leaders', 'corporateFactory', 'baseURL', function ($scope, leaders, corporateFactory, baseURL) {
     $scope.baseURL = baseURL
-    $scope.leaders = corporateFactory.query();
+    $scope.leaders = leaders;
   }])
 
   .filter('favoriteFilter', function () {
